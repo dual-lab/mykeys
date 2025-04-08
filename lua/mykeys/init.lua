@@ -13,8 +13,11 @@ local ui = require("mykeys.ui")
 
 local M = {}
 
-local function create_buffer()
-
+---Retrive mapped keys
+---@param bufnr any
+---@return table
+function M.collect_keys(bufnr)
+    return keys.get_keys(bufnr)
 end
 
 ---Toggle show mapping keys
@@ -22,7 +25,7 @@ function M.toggle()
     log.trace("toggle()")
 
     local curr_buf_id = vim.api.nvim_get_current_buf()
-    local mapped_keys = keys.get_keys(curr_buf_id)
+    local mapped_keys = M.collect_keys(curr_buf_id)
 
     ui.toggle(mapped_keys)
 end

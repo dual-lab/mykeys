@@ -29,9 +29,13 @@ local function filter_mode(mode)
     end
 end
 
-local function format_key(mk)
-    return mk.key .. "\t" .. config.values.results.sep .. " " .. mk.desc
+local function format_fn(prefix)
+    return function(mk)
+        return prefix .. config.values.results.sep .. "\t" .. mk.key .. " "
+            .. mk.desc
+    end
 end
+
 
 local function comparator_key(mk1, mk2)
     return mk1.desc < mk2.desc
@@ -77,20 +81,11 @@ end
 function M.summarize(keys)
     local bf = {}
 
-    bf[1] = " "
-    bf[2] = "Insert Mode"
-    bf[3] = " "
-    utils.string_buf_append(bf, keys[I], format_key)
+    utils.string_buf_append(bf, keys[I], format_fn("i"))
 
-    bf[#bf + 1] = " "
-    bf[#bf + 1] = "Normal Mode"
-    bf[#bf + 1] = " "
-    utils.string_buf_append(bf, keys[N], format_key)
+    utils.string_buf_append(bf, keys[N], format_fn("n"))
 
-    bf[#bf + 1] = " "
-    bf[#bf + 1] = "Visual Mode"
-    bf[#bf + 1] = " "
-    utils.string_buf_append(bf, keys[V], format_key)
+    utils.string_buf_append(bf, keys[V], format_fn("v"))
 
     return bf
 end
