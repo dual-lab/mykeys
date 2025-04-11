@@ -34,6 +34,14 @@ function M.set_defaults(opt)
     }
     append("results", opt.results or {}, results)
 
+    local prompt = {
+        title = "seearch",
+        width = 60,
+        height = 1,
+        prefix = "> "
+    }
+    append("prompt", opt.prompt or {}, prompt)
+
     M.values = vim.deepcopy(config)
 end
 
