@@ -139,7 +139,7 @@ vim.keymap.set("n", "<leader>mk"
 - [x] Create a simple popup that show insert,normal and visual mode mapped keys
 - [x] Add more config option
 - [x] Add a prompt buffer + popup in order to search inside the list
-- [ ] Create a telescope extension
+- [x] Create a telescope extension
 - [ ] Try to execute the associate function on selection
 
 <p align="right">(<a href="#top">back to top</a>)</p>
