@@ -8,15 +8,18 @@ local log = require("mykeys.dev").log
 local keys = require("mykeys.keys")
 local config = require("mykeys.config")
 local finder = require("mykeys.ui.finder")
+local scroller = require("mykeys.ui.scroller")
 
 local M = {}
 
+local mykes_ns_id = vim.api.nvim_create_namespace("mykeys_result_line")
 local mykeys_wind_id
 local mykeys_buff_id
 local mykeys_group_name = "MykeysGroup"
 local mykeys_wind_prompt_id
 local mykeys_buff_prompt_id
 local mykeys_finder
+local mykeys_scoller
 
 local function create_window(opts)
     log.trace("create_window()")
@@ -31,9 +34,9 @@ local function create_window(opts)
         minwidth = opts.width,
         minheight = opts.height,
         borderchars = borderchars,
-        highlight = "MyKeysResultsNormal",
-        borderhighlight = "MyKeysResultsBorder",
-        titlehighlight = "MyKeysResultsTitle",
+        highlight = opts.highligth or "MyKeysResultsNormal",
+        borderhighlight = opts.borderhighlight or "MyKeysResultsBorder",
+        titlehighlight = opts.titlehighlight or "MyKeysResultsTitle",
         focusable = true
     })
 
@@ -82,6 +85,7 @@ local function close_window()
             vim.api.nvim_buf_delete(mykeys_buff_prompt_id, { force = true })
             mykeys_buff_prompt_id = nil
             mykeys_finder = nil
+            mykeys_scoller = nil
         end)
     end
 
@@ -119,7 +123,6 @@ function M.toggle(mapped_keys)
 
     vim.api.nvim_win_set_option(mykeys_wind_id, "number", false)
     vim.api.nvim_buf_set_name(mykeys_buff_id, "mykeys-list")
-    vim.api.nvim_buf_set_lines(mykeys_buff_id, 0, #sum_keys, false, sum_keys)
     vim.api.nvim_buf_set_option(mykeys_buff_id, "filetype", "mykeys")
     vim.api.nvim_buf_set_option(mykeys_buff_id, "buftype", "nowrite")
     vim.api.nvim_buf_set_option(mykeys_buff_id, "bufhidden", "delete")
@@ -132,6 +135,9 @@ function M.toggle(mapped_keys)
         col = col,
         width = config.values.prompt.width,
         height = config.values.prompt.height,
+        highlight = "MyKeysPromptNormal",
+        borderhighlight = "MyKeysPromptBorder",
+        titlehighlight = "MyKeysPromptTitle"
     })
 
     mykeys_wind_prompt_id = prompt.win_id
@@ -149,6 +155,12 @@ function M.toggle(mapped_keys)
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(k, true, false, true),
         "ni", true
     )
+    vim.api.nvim_buf_set_extmark(
+        mykeys_buff_prompt_id, mykes_ns_id, 0, 0, {
+            line_hl_group = "MykeysVisual",
+        }
+    )
+
 
     vim.api.nvim_create_augroup(mykeys_group_name, {})
     vim.api.nvim_create_autocmd("BufLeave", {
@@ -160,6 +172,14 @@ function M.toggle(mapped_keys)
             require("mykeys.ui").toggle()
         end
     })
+
+    mykeys_scoller = scroller.New({
+        windid = mykeys_wind_id,
+        bufrid = mykeys_buff_id,
+        cap = #sum_keys,
+        limit = #sum_keys,
+        ns_id = mykes_ns_id,
+    })
     mykeys_finder = finder.New({
         prompt_prefix = config.values.prompt.prefix,
         prompt_windid = mykeys_wind_prompt_id,
@@ -169,11 +189,12 @@ function M.toggle(mapped_keys)
         data = sum_keys,
         onFilter = function(value, input)
             return string.find(value, input) ~= nil
+        end,
+        onBuffChange = function (value)
+            mykeys_scoller:refresh(#value)
         end
     })
-    vim.api.nvim_win_set_cursor(mykeys_wind_id, { #sum_keys - 1, 0 })
     mykeys_finder:attach()
-    --TODO liste on buffer prompt change
 end
 
 return M
