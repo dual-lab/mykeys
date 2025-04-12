@@ -26,7 +26,7 @@ local Base = {
     onFilter = function(v, i)
         --do nothing
     end,
-    onBuffChange = function (value)
+    onBuffChange = function (value, valid_count)
         --do nothing
     end
 }
@@ -72,7 +72,7 @@ function Base:on_line(...)
                 -1,
                 false,
                 self.data)
-            self.onBuffChange(self.data)
+            self.onBuffChange(self.data, #self.data)
             return
         end
         local count_top = 1
@@ -87,7 +87,7 @@ function Base:on_line(...)
             end
         end
         vim.api.nvim_buf_set_lines(self.result_bufrn, 0, -1, false, self._buf_data)
-        self.onBuffChange(self._buf_data)
+        self.onBuffChange(self._buf_data, #self._buf_data - count_bottom)
     end)
 end
 

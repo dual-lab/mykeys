@@ -21,7 +21,7 @@ local hl = {
     MykeysPromptTitle = { default = true, link = "MykeysTitle" },
     MykeysPromptNormal = { default = true, link = "MykeysNormal" },
     MykeysPromptBorder = { default = true, link = "MykeysBorder" },
-    MykeysPromptPrefix = { default = true, link = "Identifier" },
+    MykeysPromptPrefix = { default = true, link = "NormalFloat" },
 
 }
 

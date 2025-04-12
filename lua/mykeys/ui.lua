@@ -9,6 +9,7 @@ local keys = require("mykeys.keys")
 local config = require("mykeys.config")
 local finder = require("mykeys.ui.finder")
 local scroller = require("mykeys.ui.scroller")
+local utils = require("mykeys.utils")
 
 local M = {}
 
@@ -94,6 +95,26 @@ local function close_window()
     end
 end
 
+local function apply_prompt_mapping()
+    local opt = { noremap = true, silent = true, buffer = mykeys_buff_prompt_id }
+    local mode = { "n", "i" }
+    local mapping = {
+        { "<CR>", mode, function() end, opt },
+        { "<Down>", mode, function()
+            mykeys_scoller:shift_position(1)
+        end, opt },
+        { "<Up>", mode, function()
+            mykeys_scoller:shift_position(-1)
+        end, opt
+        },
+        { "<ESC>", { "n" }, function()
+            close_window()
+        end, opt }
+    }
+
+    utils.set_mapping(mapping)
+end
+
 ---Toggle popup keys
 ---@param mapped_keys table
 function M.toggle(mapped_keys)
@@ -157,7 +178,7 @@ function M.toggle(mapped_keys)
     )
     vim.api.nvim_buf_set_extmark(
         mykeys_buff_prompt_id, mykes_ns_id, 0, 0, {
-            line_hl_group = "MykeysVisual",
+            line_hl_group = "MykeysPromptPrefix",
         }
     )
 
@@ -190,11 +211,12 @@ function M.toggle(mapped_keys)
         onFilter = function(value, input)
             return string.find(value, input) ~= nil
         end,
-        onBuffChange = function (value)
-            mykeys_scoller:refresh(#value)
+        onBuffChange = function(values, limit)
+            mykeys_scoller:refresh(limit)
         end
     })
     mykeys_finder:attach()
+    apply_prompt_mapping()
 end
 
 return M
