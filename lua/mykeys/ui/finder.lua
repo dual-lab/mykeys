@@ -3,7 +3,7 @@
 ---@alias M
 ---
 
-
+local utils = require("mykeys.utils")
 local log = require("mykeys.dev").log
 
 local M = {}
@@ -15,6 +15,7 @@ local M = {}
 ---@field prompt_prefix string
 ---@field prompt_windid integer
 ---@field result_bufrn integer
+---@field _buf_data table
 local Base = {
     prompt_bufrn = 0,
     prompt_prefix = "",
@@ -32,6 +33,7 @@ local Base = {
 ---@return FinderBase
 function M.New(opt)
     local o = opt or {}
+    o["_buf_data"] = utils.init_array({}, #opt.data, "")
     Base.__index = Base
     setmetatable(o, Base)
     return o
@@ -64,18 +66,23 @@ function Base:on_line(...)
         if #input == 0 then
             vim.api.nvim_buf_set_lines(self.result_bufrn,
                 0,
-                #self.data,
+                -1,
                 false,
                 self.data)
             return
         end
-        local resl = {}
+        local count_top = 1
+        local count_bottom = #self._buf_data
         for _, value in ipairs(self.data) do
             if self.onFilter(value, input) then
-                resl[#resl + 1] = value
+                self._buf_data[count_bottom] = value
+                count_bottom = count_bottom - 1
+            else
+                self._buf_data[count_top] = ""
+                count_top = count_top + 1
             end
         end
-        vim.api.nvim_buf_set_lines(self.result_bufrn, 0, #self.data, false, resl)
+        vim.api.nvim_buf_set_lines(self.result_bufrn, 0, -1, false, self._buf_data)
     end)
 end
 

@@ -117,7 +117,7 @@ function M.toggle(mapped_keys)
 
     local sum_keys = keys.summarize(mapped_keys)
 
-    vim.api.nvim_win_set_option(mykeys_wind_id, "number", true)
+    vim.api.nvim_win_set_option(mykeys_wind_id, "number", false)
     vim.api.nvim_buf_set_name(mykeys_buff_id, "mykeys-list")
     vim.api.nvim_buf_set_lines(mykeys_buff_id, 0, #sum_keys, false, sum_keys)
     vim.api.nvim_buf_set_option(mykeys_buff_id, "filetype", "mykeys")
@@ -171,6 +171,7 @@ function M.toggle(mapped_keys)
             return string.find(value, input) ~= nil
         end
     })
+    vim.api.nvim_win_set_cursor(mykeys_wind_id, { #sum_keys - 1, 0 })
     mykeys_finder:attach()
     --TODO liste on buffer prompt change
 end

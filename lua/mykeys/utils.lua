@@ -26,4 +26,17 @@ function M.string_buf_append(buff, values, fn)
     return buff
 end
 
+---Initialize and array with a default value
+---@param a table
+---@param n integer
+---@param value any
+---@return array
+function M.init_array(a, n, value)
+    for i = 1, n, 1 do
+        a[i] = value
+    end
+
+    return a
+end
+
 return M
