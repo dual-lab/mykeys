@@ -6,7 +6,7 @@
 [![MIT License][license-shield]][license-url]
 [![GitHub release][version-shield]][version-url]
 [![lua]](http://www.lua.org)
-[![Neovim](https:)](https://neovim.io)
+[![Neovim][neovim]](https://neovim.io)
 
 
 <!-- PROJECT LOGO -->
@@ -137,8 +137,8 @@ vim.keymap.set("n", "<leader>mk"
 ## Roadmap
 
 - [x] Create a simple popup that show insert,normal and visual mode mapped keys
-- [ ] Add more config option
-- [ ] Add a prompt buffer + popup in order to search inside the list
+- [x] Add more config option
+- [x] Add a prompt buffer + popup in order to search inside the list
 - [ ] Create a telescope extension
 - [ ] Try to execute the associate function on selection
 

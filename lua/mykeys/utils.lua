@@ -26,4 +26,30 @@ function M.string_buf_append(buff, values, fn)
     return buff
 end
 
+---Initialize and array with a default value
+---@param a table
+---@param n integer
+---@param value any
+---@return table
+function M.init_array(a, n, value)
+    for i = 1, n, 1 do
+        a[i] = value
+    end
+
+    return a
+end
+
+---Util function to set multiple mapping
+---@param mapping table<table<1|2|3|4>>
+function M.set_mapping(mapping)
+    for _, value in pairs(mapping) do
+        vim.keymap.set(
+            value[2],
+            value[1],
+            value[3],
+            value[4]
+        )
+    end
+end
+
 return M
